@@ -30,6 +30,10 @@ func String(key string, val string) Field {
 	return Field{Key: key, Type: clogint.StringType, String: val}
 }
 
+func Stringer(key string, val fmt.Stringer) Field {
+	return Field{Key: key, Type: clogint.StringerType, Other: val}
+}
+
 func Uint(key string, val uint) Field {
 	return Field{Key: key, Type: clogint.UintType, Integer: int64(val)}
 }
@@ -60,10 +64,14 @@ func (c *ConsoleLogger) Log(level clogint.LogLevel, timestring string, name stri
 	case clogint.Error:
 		selectedColor = color.New(color.FgRed)
 		levelString = "ERROR"
+	case clogint.Panic:
+		selectedColor = color.New(color.FgHiWhite).Add(color.BgRed)
+		levelString = "PANIC"
 	}
 	color.New(color.FgWhite).Print(timestring + " ")
 	selectedColor.Print(levelString + ": ")
-	fmt.Println(name + "  " + output)
+	color.New(color.FgHiBlue).Print(name)
+	fmt.Println("  " + output)
 }
 
 type Log struct {
@@ -80,14 +88,16 @@ func DefaultLog() *Log {
 func convertToString(fields []Field) string {
 	s := ""
 	for _, f := range fields {
-		s += f.Key + "="
+		s += color.CyanString(f.Key) + "="
 		switch f.Type {
 		case clogint.IntType:
 			s += fmt.Sprintf("%v", f.Integer)
 		case clogint.UintType:
 			s += fmt.Sprintf("%v", f.Integer)
 		case clogint.StringType:
-			s += fmt.Sprintf("%v", f.String)
+			s += fmt.Sprintf("'%v'", f.String)
+		case clogint.StringerType:
+			s += fmt.Sprintf("'%v'", f.Other)
 		case clogint.BoolType:
 			s += fmt.Sprintf("%v", f.Integer)
 		case clogint.ErrorType:
@@ -107,11 +117,11 @@ func (l *Log) log(level clogint.LogLevel, name string, fields []Field) {
 }
 
 func (l *Log) Err(err error) {
-	l.log(clogint.Error, "", []Field{Error("err", err)})
+	l.log(clogint.Error, "error", []Field{Error("err", err)})
 }
 
 func (l *Log) Error(name string, fields ...Field) {
-	l.log(clogint.Warning, name, fields)
+	l.log(clogint.Error, name, fields)
 }
 
 func (l *Log) Warn(name string, fields ...Field) {
@@ -128,4 +138,10 @@ func (l *Log) Debug(name string, fields ...Field) {
 
 func (l *Log) Trace(name string, fields ...Field) {
 	l.log(clogint.Trace, name, fields)
+}
+
+func (l *Log) Panic(name string, fields ...Field) {
+	l.log(clogint.Panic, name, fields)
+	panicString := name + " " + convertToString(fields)
+	panic(panicString)
 }

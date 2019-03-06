@@ -6,6 +6,7 @@ const (
 	IntType FieldType = iota
 	UintType
 	StringType
+	StringerType
 	BoolType
 	ErrorType
 )
@@ -18,6 +19,7 @@ const (
 	Info
 	Warning
 	Error
+	Panic
 )
 
 type Field struct {
