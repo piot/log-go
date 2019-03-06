@@ -2,6 +2,7 @@ package clog
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/fatih/color"
@@ -70,7 +71,12 @@ func (c *ConsoleLogger) Log(level clogint.LogLevel, timestring string, name stri
 	}
 	color.New(color.FgWhite).Print(timestring + " ")
 	selectedColor.Print(levelString + ": ")
-	color.New(color.FgHiBlue).Print(name)
+	const maxCount = 40
+	if len(name) > maxCount {
+		name = name[:maxCount]
+	}
+	padding := strings.Repeat(" ", maxCount-len(name))
+	color.New(color.FgHiBlue).Print(name + padding)
 	fmt.Println("  " + output)
 }
 
