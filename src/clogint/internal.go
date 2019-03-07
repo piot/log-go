@@ -8,6 +8,7 @@ const (
 	StringType
 	StringerType
 	BoolType
+	BlobType
 	ErrorType
 )
 
