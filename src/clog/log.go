@@ -207,3 +207,15 @@ func (l *Log) Panic(name string, fields ...Field) {
 func (l *Log) With(name string, fields ...Field) *Log {
 	return &Log{logger: l.logger, filterLevel: l.filterLevel, prefixName: name, prefixFields: fields}
 }
+
+func (l *Log) CheckTrace() bool {
+	return l.filterLevel <= clogint.Trace
+}
+
+func (l *Log) CheckDebug() bool {
+	return l.filterLevel <= clogint.Debug
+}
+
+func (l *Log) CheckInfo() bool {
+	return l.filterLevel <= clogint.Info
+}
