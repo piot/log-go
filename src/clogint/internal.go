@@ -7,6 +7,7 @@ const (
 	UintType
 	StringType
 	StringerType
+	InterfaceType
 	BoolType
 	BlobType
 	ErrorType

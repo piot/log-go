@@ -56,6 +56,10 @@ func Stringer(key string, val fmt.Stringer) Field {
 	return Field{Key: key, Type: clogint.StringerType, Other: val}
 }
 
+func Interface(key string, val interface{}) Field {
+	return Field{Key: key, Type: clogint.InterfaceType, Other: val}
+}
+
 func Uint(key string, val uint) Field {
 	return Field{Key: key, Type: clogint.UintType, Integer: int64(val)}
 }
@@ -143,6 +147,8 @@ func convertToString(fields []Field) string {
 		case clogint.StringType:
 			s += fmt.Sprintf("'%v'", f.String)
 		case clogint.StringerType:
+			s += fmt.Sprintf("'%v'", f.Other)
+		case clogint.InterfaceType:
 			s += fmt.Sprintf("'%v'", f.Other)
 		case clogint.BoolType:
 			s += fmt.Sprintf("%v", f.Integer)
