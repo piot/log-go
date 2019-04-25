@@ -1,9 +1,7 @@
 package clog
 
 import (
-	"encoding/hex"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/fatih/color"
@@ -81,44 +79,7 @@ func Uint64(key string, val uint64) Field {
 }
 
 type Logger interface {
-	Log(level clogint.LogLevel, timeString string, name string, output string)
-}
-
-type ConsoleLogger struct {
-}
-
-func (c *ConsoleLogger) Log(level clogint.LogLevel, timestring string, name string, output string) {
-	var selectedColor *color.Color
-	levelString := "unknown"
-	switch level {
-	case clogint.Info:
-		selectedColor = color.New(color.FgCyan)
-		levelString = "INFO "
-	case clogint.Warning:
-		selectedColor = color.New(color.FgYellow)
-		levelString = "WARN "
-	case clogint.Debug:
-		selectedColor = color.New(color.FgGreen)
-		levelString = "DEBUG"
-	case clogint.Trace:
-		selectedColor = color.New(color.FgMagenta)
-		levelString = "TRACE"
-	case clogint.Error:
-		selectedColor = color.New(color.FgRed)
-		levelString = "ERROR"
-	case clogint.Panic:
-		selectedColor = color.New(color.FgHiWhite).Add(color.BgRed)
-		levelString = "PANIC"
-	}
-	color.New(color.FgWhite).Print(timestring + " ")
-	selectedColor.Print(levelString + ": ")
-	const maxCount = 40
-	if len(name) > maxCount {
-		name = name[:maxCount]
-	}
-	padding := strings.Repeat(" ", maxCount-len(name))
-	color.New(color.FgHiBlue).Print(name + padding)
-	fmt.Println("  " + output)
+	Log(level clogint.LogLevel, timeString string, name string, fields []Field)
 }
 
 type Log struct {
@@ -135,33 +96,14 @@ func DefaultLog() *Log {
 	return &Log{logger: logger}
 }
 
-func convertToString(fields []Field) string {
-	s := ""
-	for _, f := range fields {
-		s += color.CyanString(f.Key) + "="
-		switch f.Type {
-		case clogint.IntType:
-			s += fmt.Sprintf("%v", f.Integer)
-		case clogint.UintType:
-			s += fmt.Sprintf("%v", f.Integer)
-		case clogint.StringType:
-			s += fmt.Sprintf("'%v'", f.String)
-		case clogint.StringerType:
-			s += fmt.Sprintf("'%v'", f.Other)
-		case clogint.InterfaceType:
-			s += fmt.Sprintf("'%v'", f.Other)
-		case clogint.BoolType:
-			s += fmt.Sprintf("%v", f.Integer)
-		case clogint.BlobType:
-			hexString := hex.Dump(f.Other.([]byte))
-			s += hexString
-		case clogint.ErrorType:
-			s += fmt.Sprintf("%s", f.Other.(error).Error())
-		}
-		s += " "
+func DefaultFileLog(companyName string, applicationName string) (*Log, error) {
+	logger, err := NewFileLogger(companyName, applicationName)
+	if err != nil {
+		return nil, err
 	}
+	color.NoColor = false
 
-	return s
+	return &Log{logger: logger}, nil
 }
 
 func (l *Log) log(level clogint.LogLevel, name string, fields []Field) {
@@ -171,9 +113,11 @@ func (l *Log) log(level clogint.LogLevel, name string, fields []Field) {
 	t := time.Now()
 	timeString := t.UTC().Format(time.RFC3339)
 	allFields := append(l.prefixFields, fields...)
-	output := convertToString(allFields)
-	wholeName := l.prefixName + ":" + name
-	l.logger.Log(level, timeString, wholeName, output)
+	wholeName := name
+	if l.prefixName != "" {
+		wholeName = l.prefixName + ":" + wholeName
+	}
+	l.logger.Log(level, timeString, wholeName, allFields)
 }
 
 func (l *Log) SetLogLevel(level clogint.LogLevel) {
@@ -206,7 +150,7 @@ func (l *Log) Trace(name string, fields ...Field) {
 
 func (l *Log) Panic(name string, fields ...Field) {
 	l.log(clogint.Panic, name, fields)
-	panicString := name + " " + convertToString(fields)
+	panicString := name + " " + ConvertToString(fields)
 	panic(panicString)
 }
 
