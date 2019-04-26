@@ -14,12 +14,41 @@ type FileLogger struct {
 	write io.Writer
 }
 
-func NewFileLogger(company string, application string) (*FileLogger, error) {
+func findXDGConfig(home string) string {
+	xdkConfig := os.Getenv("XDG_CONFIG_HOME")
+	if xdkConfig != "" {
+		return xdkConfig
+	}
+
+	return filepath.Join(home, ".config")
+}
+
+func logLocation(organization string, application string) (string, error) {
 	home, homeErr := homedir.Dir()
 	if homeErr != nil {
-		return nil, homeErr
+		return "", homeErr
 	}
-	directory := filepath.Join(home, "Library/Logs/", company)
+	os := DetectOperatingSystem()
+	switch os {
+	case Windows:
+		logDirectory := filepath.Join(home, organization, application, "logs")
+		return logDirectory, nil
+	case MacOS:
+		return filepath.Join(home, "Library/Logs/", organization), nil
+	case Linux:
+		xdgConfig := findXDGConfig(home)
+		logDirectory := filepath.Join(xdgConfig, organization, application, "logs")
+		return logDirectory, nil
+
+	}
+	panic("clog: unknown operating system")
+}
+
+func NewFileLogger(organization string, application string) (*FileLogger, error) {
+	directory, locationErr := logLocation(organization, application)
+	if locationErr != nil {
+		return nil, locationErr
+	}
 	os.MkdirAll(directory, os.ModePerm)
 	filename := filepath.Join(directory, application+".log")
 	f, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
