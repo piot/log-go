@@ -44,11 +44,7 @@ func logLocation(organization string, application string) (string, error) {
 	panic("clog: unknown operating system")
 }
 
-func NewFileLogger(organization string, application string) (*FileLogger, error) {
-	directory, locationErr := logLocation(organization, application)
-	if locationErr != nil {
-		return nil, locationErr
-	}
+func NewFileLogger(directory string, application string) (*FileLogger, error) {
 	os.MkdirAll(directory, os.ModePerm)
 	filename := filepath.Join(directory, application+".log")
 	f, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)

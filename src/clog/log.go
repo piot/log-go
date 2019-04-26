@@ -96,8 +96,23 @@ func DefaultLog() *Log {
 	return &Log{logger: logger}
 }
 
-func DefaultFileLog(companyName string, applicationName string) (*Log, error) {
-	logger, err := NewFileLogger(companyName, applicationName)
+func DefaultFileLog(organization string, applicationName string) (*Log, error) {
+	directory, locationErr := logLocation(organization, applicationName)
+	if locationErr != nil {
+		return nil, locationErr
+	}
+
+	logger, err := NewFileLogger(directory, applicationName)
+	if err != nil {
+		return nil, err
+	}
+	color.NoColor = false
+
+	return &Log{logger: logger}, nil
+}
+
+func NewFileLog(directory string, applicationName string) (*Log, error) {
+	logger, err := NewFileLogger(directory, applicationName)
 	if err != nil {
 		return nil, err
 	}
