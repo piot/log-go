@@ -2,6 +2,7 @@ package clog
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/fatih/color"
@@ -141,6 +142,31 @@ func (l *Log) log(level clogint.LogLevel, name string, fields []Field) {
 		wholeName = l.prefixName + ":" + wholeName
 	}
 	l.logger.Log(level, timeString, wholeName, allFields)
+}
+
+func stringToLogLevel(logLevelString string, defaultLevel clogint.LogLevel) clogint.LogLevel {
+	logLevelString = strings.ToLower(logLevelString)
+	switch logLevelString {
+	case "trace":
+		return clogint.Trace
+	case "debug":
+		return clogint.Debug
+	case "info":
+		return clogint.Info
+	case "warn":
+		return clogint.Warning
+	case "error":
+		return clogint.Error
+	case "panic":
+		return clogint.Panic
+	}
+
+	return defaultLevel
+}
+
+func (l *Log) SetLogLevelUsingString(logLevelString string, defaultLevel clogint.LogLevel) {
+	logLevel := stringToLogLevel(logLevelString, defaultLevel)
+	l.SetLogLevel(logLevel)
 }
 
 func (l *Log) SetLogLevel(level clogint.LogLevel) {
