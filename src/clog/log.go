@@ -121,6 +121,14 @@ func NewFileLog(directory string, applicationName string) (*Log, error) {
 	return &Log{logger: logger}, nil
 }
 
+func NewMultiLog(loggers ...Logger) (*Log, error) {
+	logger, loggerErr := NewMultiLogger(loggers...)
+	if loggerErr != nil {
+		return nil, loggerErr
+	}
+	return &Log{logger: logger}, nil
+}
+
 func (l *Log) log(level clogint.LogLevel, name string, fields []Field) {
 	if level < l.filterLevel {
 		return

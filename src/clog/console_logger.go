@@ -11,6 +11,10 @@ import (
 type ConsoleLogger struct {
 }
 
+func NewConsoleLogger() *ConsoleLogger {
+	return &ConsoleLogger{}
+}
+
 func convertToColorString(fields []Field) string {
 	s := ""
 	for _, f := range fields {
