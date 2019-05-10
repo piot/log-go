@@ -18,8 +18,23 @@ func NewConsoleLogger() *ConsoleLogger {
 func convertToColorString(fields []Field) string {
 	s := ""
 	for _, f := range fields {
+		value := fieldValueToString(f)
+		lines := strings.Split(value, "\n")
+		isMultiline := len(lines) > 1
+		if isMultiline {
+			s += "\n  "
+		}
 		s += color.CyanString(f.Key) + "="
-		s += color.GreenString(fieldValueToString(f))
+		if isMultiline {
+			for index, line := range lines {
+				if index > 0 {
+					s += "\n    "
+				}
+				s += color.GreenString(line)
+			}
+		} else {
+			s += color.GreenString(fieldValueToString(f))
+		}
 		s += " "
 	}
 
