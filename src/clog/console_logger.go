@@ -2,6 +2,8 @@ package clog
 
 import (
 	"fmt"
+	"io"
+	"os"
 	"strings"
 
 	"github.com/fatih/color"
@@ -9,10 +11,11 @@ import (
 )
 
 type ConsoleLogger struct {
+	output io.Writer
 }
 
 func NewConsoleLogger() *ConsoleLogger {
-	return &ConsoleLogger{}
+	return &ConsoleLogger{output: os.Stderr}
 }
 
 func convertToColorString(fields []Field) string {
@@ -65,13 +68,13 @@ func (c *ConsoleLogger) Log(level clogint.LogLevel, timestring string, name stri
 		selectedColor = color.New(color.FgHiWhite).Add(color.BgRed)
 		levelString = "PANIC"
 	}
-	color.New(color.FgWhite).Print(timestring + " ")
-	selectedColor.Print(levelString + ": ")
+	color.New(color.FgWhite).Fprint(c.output, timestring+" ")
+	selectedColor.Fprint(c.output, levelString+": ")
 	const maxCount = 40
 	if len(name) > maxCount {
 		name = name[:maxCount]
 	}
 	padding := strings.Repeat(" ", maxCount-len(name))
-	color.New(color.FgHiBlue).Print(name + padding)
-	fmt.Println("  " + output)
+	color.New(color.FgHiBlue).Fprint(c.output, name+padding)
+	fmt.Fprintln(c.output, "  "+output)
 }

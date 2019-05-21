@@ -91,7 +91,7 @@ type Log struct {
 }
 
 func DefaultLog() *Log {
-	logger := &ConsoleLogger{}
+	logger := NewConsoleLogger()
 	color.NoColor = false
 
 	return &Log{logger: logger}
