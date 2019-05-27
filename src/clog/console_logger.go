@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 	"strings"
 
 	"github.com/fatih/color"
+	"github.com/mattn/go-colorable"
 	"github.com/piot/log-go/src/clogint"
 )
 
@@ -14,8 +16,18 @@ type ConsoleLogger struct {
 	output io.Writer
 }
 
+func isWindowsWithoutColorSupport() bool {
+	os := runtime.GOOS
+	return strings.Contains(os, "windows")
+}
+
 func NewConsoleLogger() *ConsoleLogger {
-	return &ConsoleLogger{output: os.Stderr}
+	var writer io.Writer
+	writer = os.Stderr
+	if isWindowsWithoutColorSupport() {
+		writer = colorable.NewColorableStderr()
+	}
+	return &ConsoleLogger{output: writer}
 }
 
 func convertToColorString(fields []Field) string {
