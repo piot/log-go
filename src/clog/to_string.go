@@ -24,7 +24,7 @@ func fieldValueToString(f Field) string {
 	case clogint.IntType:
 		return fmt.Sprintf("%v", f.Integer)
 	case clogint.UintType:
-		return fmt.Sprintf("%v", f.Integer)
+		return fmt.Sprintf("%v", f.UnsignedInteger)
 	case clogint.StringType:
 		return fmt.Sprintf("'%v'", f.String)
 	case clogint.StringerType:

@@ -25,9 +25,10 @@ const (
 )
 
 type Field struct {
-	Type    FieldType
-	Key     string
-	Integer int64
-	String  string
-	Other   interface{}
+	Type            FieldType
+	Key             string
+	Integer         int64
+	UnsignedInteger uint64
+	String          string
+	Other           interface{}
 }

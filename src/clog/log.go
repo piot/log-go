@@ -60,23 +60,23 @@ func Interface(key string, val interface{}) Field {
 }
 
 func Uint(key string, val uint) Field {
-	return Field{Key: key, Type: clogint.UintType, Integer: int64(val)}
+	return Field{Key: key, Type: clogint.UintType, UnsignedInteger: uint64(val)}
 }
 
 func Uint8(key string, val uint8) Field {
-	return Field{Key: key, Type: clogint.UintType, Integer: int64(val)}
+	return Field{Key: key, Type: clogint.UintType, UnsignedInteger: uint64(val)}
 }
 
 func Uint16(key string, val uint16) Field {
-	return Field{Key: key, Type: clogint.UintType, Integer: int64(val)}
+	return Field{Key: key, Type: clogint.UintType, UnsignedInteger: uint64(val)}
 }
 
 func Uint32(key string, val uint32) Field {
-	return Field{Key: key, Type: clogint.UintType, Integer: int64(val)}
+	return Field{Key: key, Type: clogint.UintType, UnsignedInteger: uint64(val)}
 }
 
 func Uint64(key string, val uint64) Field {
-	return Field{Key: key, Type: clogint.UintType, Integer: int64(val)}
+	return Field{Key: key, Type: clogint.UintType, UnsignedInteger: uint64(val)}
 }
 
 type Logger interface {
@@ -164,8 +164,25 @@ func stringToLogLevel(logLevelString string, defaultLevel clogint.LogLevel) clog
 	return defaultLevel
 }
 
+func verbosityToLogLevel(verbosityCount int) clogint.LogLevel {
+	switch verbosityCount {
+	case 0:
+		return clogint.Info
+	case 1:
+		return clogint.Debug
+	case 2:
+		return clogint.Trace
+	}
+	return clogint.Trace
+}
+
 func (l *Log) SetLogLevelUsingString(logLevelString string, defaultLevel clogint.LogLevel) {
 	logLevel := stringToLogLevel(logLevelString, defaultLevel)
+	l.SetLogLevel(logLevel)
+}
+
+func (l *Log) SetLogLevelUsingVerbosity(verbosityCount int) {
+	logLevel := verbosityToLogLevel(verbosityCount)
 	l.SetLogLevel(logLevel)
 }
 
@@ -201,6 +218,24 @@ func (l *Log) Panic(name string, fields ...Field) {
 	l.log(clogint.Panic, name, fields)
 	panicString := name + " " + ConvertToString(fields)
 	panic(panicString)
+}
+
+type BitColor = uint8
+
+const (
+	ForegroundBlue      BitColor = 0x1
+	ForegroundGreen     BitColor = 0x2
+	ForegroundRed       BitColor = 0x4
+	ForegroundIntensity BitColor = 0x8
+	ForegroundMask      BitColor = (ForegroundRed | ForegroundBlue | ForegroundGreen | ForegroundIntensity)
+	BackgroundBlue      BitColor = 0x10
+	BackgroundGreen     BitColor = 0x20
+	BackgroundRed       BitColor = 0x40
+	BackgroundIntensity BitColor = 0x80
+	BackgroundMask      BitColor = (BackgroundRed | BackgroundBlue | BackgroundGreen | BackgroundIntensity)
+)
+
+func (l *Log) InfoColor(color BitColor, name string, fields ...Field) {
 }
 
 func (l *Log) With(name string, fields ...Field) *Log {
