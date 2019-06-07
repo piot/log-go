@@ -29,6 +29,15 @@ func fieldValueToString(f Field) string {
 		return fmt.Sprintf("'%v'", f.String)
 	case clogint.StringerType:
 		return fmt.Sprintf("'%v'", f.Other)
+	case clogint.StringerSliceType:
+		s := ""
+		for index, stringer := range f.Other.([]fmt.Stringer) {
+			if index > 0 {
+				s += ", "
+			}
+			s += fmt.Sprintf("'%v'", stringer)
+		}
+		return s
 	case clogint.InterfaceType:
 		return fmt.Sprintf("'%v'", f.Other)
 	case clogint.BoolType:

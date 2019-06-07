@@ -55,6 +55,10 @@ func Stringer(key string, val fmt.Stringer) Field {
 	return Field{Key: key, Type: clogint.StringerType, Other: val}
 }
 
+func StringerSlice(key string, val []fmt.Stringer) Field {
+	return Field{Key: key, Type: clogint.StringerSliceType, Other: val}
+}
+
 func Interface(key string, val interface{}) Field {
 	return Field{Key: key, Type: clogint.InterfaceType, Other: val}
 }

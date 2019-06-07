@@ -7,6 +7,7 @@ const (
 	UintType
 	StringType
 	StringerType
+	StringerSliceType
 	InterfaceType
 	BoolType
 	BlobType
