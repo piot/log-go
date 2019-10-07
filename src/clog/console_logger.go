@@ -27,6 +27,10 @@ func NewConsoleLogger() *ConsoleLogger {
 	if isWindowsWithoutColorSupport() {
 		writer = colorable.NewColorableStderr()
 	}
+	return NewConsoleLoggerWithWriter(writer)
+}
+
+func NewConsoleLoggerWithWriter(writer io.Writer) *ConsoleLogger {
 	return &ConsoleLogger{output: writer}
 }
 
