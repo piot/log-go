@@ -194,6 +194,10 @@ func (l *Log) SetLogLevel(level clogint.LogLevel) {
 	l.filterLevel = level
 }
 
+func (l *Log) LogLevel() clogint.LogLevel {
+	return l.filterLevel
+}
+
 func (l *Log) Err(err error) {
 	l.log(clogint.Error, "error", []Field{Error("err", err)})
 }
