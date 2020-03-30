@@ -1,5 +1,7 @@
 package clogint
 
+import "fmt"
+
 type FieldType uint8
 
 const (
@@ -12,6 +14,7 @@ const (
 	BoolType
 	BlobType
 	ErrorType
+	TableType
 )
 
 type LogLevel uint8
@@ -32,4 +35,10 @@ type Field struct {
 	UnsignedInteger uint64
 	String          string
 	Other           interface{}
+}
+
+type Table struct {
+	Columns      []string
+	Data         [][]string
+	DataStringer [][]fmt.Stringer
 }

@@ -83,6 +83,14 @@ func Uint64(key string, val uint64) Field {
 	return Field{Key: key, Type: clogint.UintType, UnsignedInteger: uint64(val)}
 }
 
+func Table(key string, columns []string, rows [][]string) Field {
+	return Field{Key: key, Type: clogint.TableType, Other: clogint.Table{Columns: columns, Data: rows}}
+}
+
+func TableStringer(key string, columns []string, rows [][]fmt.Stringer) Field {
+	return Field{Key: key, Type: clogint.TableType, Other: clogint.Table{Columns: columns, DataStringer: rows}}
+}
+
 type Logger interface {
 	Log(level clogint.LogLevel, timeString string, name string, fields []Field)
 }
