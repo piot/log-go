@@ -28,6 +28,7 @@ func logLocation(organization string, application string) (string, error) {
 	if homeErr != nil {
 		return "", homeErr
 	}
+
 	os := DetectOperatingSystem()
 	switch os {
 	case Windows:
@@ -41,12 +42,15 @@ func logLocation(organization string, application string) (string, error) {
 		return logDirectory, nil
 
 	}
-	panic("clog: unknown operating system")
+
+	return "", fmt.Errorf("clog: unknown operating system")
 }
 
 func NewFileLogger(directory string, application string) (*FileLogger, error) {
 	os.MkdirAll(directory, os.ModePerm)
+
 	filename := filepath.Join(directory, application+".log")
+
 	f, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		return nil, err
@@ -58,6 +62,7 @@ func NewFileLogger(directory string, application string) (*FileLogger, error) {
 func (c *FileLogger) Log(level clogint.LogLevel, timestring string, name string, fields []Field) {
 	output := ConvertToString(fields)
 	levelString := "unknown"
+
 	switch level {
 	case clogint.Info:
 		levelString = "INFO "
@@ -72,5 +77,6 @@ func (c *FileLogger) Log(level clogint.LogLevel, timestring string, name string,
 	case clogint.Panic:
 		levelString = "PANIC"
 	}
+
 	fmt.Fprintf(c.write, "%s [%s] %s  %s\n", timestring, levelString, name, output)
 }
