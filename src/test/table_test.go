@@ -17,7 +17,12 @@ func (s SomeStringer) String() string {
 func TestTable(t *testing.T) {
 	log := clog.DefaultLog()
 
-	log.Info("table log", clog.Table("a table", []string{"+firstColumn", "lastColumn"}, [][]string{{"First test", "This is just a long string"}}))
+	log.Info("table log", clog.Table("a table", []string{"+firstColumn", "lastColumn"}, [][]string{{"First test", "This is just a long string"}}).WithColorIndex(1))
 	log.Info("table log", clog.TableStringer("a table", []string{"+firstColumn", "lastColumn"}, [][]fmt.Stringer{{SomeStringer{}, SomeStringer{}}}))
+
+	for i := 0; i < 8; i++ {
+		log.Info("table log", clog.Table("a table", []string{"+firstColumn", "lastColumn"}, [][]string{{"First test", "This is just a long string"}}).WithColorIndex(i))
+	}
+
 	log.Warn("completely different")
 }

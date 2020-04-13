@@ -34,7 +34,15 @@ type Field struct {
 	Integer         int64
 	UnsignedInteger uint64
 	String          string
+	ColorIndex      int
 	Other           interface{}
+}
+
+func (f Field) WithColorIndex(index int) Field {
+	newF := f
+	newF.ColorIndex = index
+
+	return newF
 }
 
 type Table struct {

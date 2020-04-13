@@ -55,7 +55,7 @@ func expandTableStringers(stringers [][]fmt.Stringer) [][]string {
 	return targetRows
 }
 
-func tableToString(t clogint.Table) string {
+func tableToString(t clogint.Table, colorIndex int) string {
 	dataToUse := t.Data
 	if t.DataStringer != nil {
 		dataToUse = expandTableStringers(t.DataStringer)
@@ -68,8 +68,31 @@ func tableToString(t clogint.Table) string {
 		return err.Error()
 	}
 
-	columnColor := color.New(color.FgHiWhite).Add(color.BgCyan)
-	dataColor := color.New(color.FgHiYellow).Add(color.BgBlue)
+	//	columnColor := color.New(color.FgHiYellow).Add(color.BgHiBlue)
+	colorPalette := []*color.Color{
+		color.New(color.FgHiYellow).Add(color.BgBlue),
+		color.New(color.FgHiWhite).Add(color.BgBlue),
+
+		color.New(color.FgHiYellow).Add(color.BgMagenta),
+		color.New(color.FgHiWhite).Add(color.BgMagenta),
+
+		color.New(color.FgHiYellow).Add(color.BgCyan),
+		color.New(color.FgHiWhite).Add(color.BgCyan),
+	}
+
+	columnPalette := []*color.Color{
+		color.New(color.FgBlack).Add(color.BgHiBlue),
+		color.New(color.FgBlack).Add(color.BgHiBlue),
+
+		color.New(color.FgBlack).Add(color.BgHiMagenta),
+		color.New(color.FgBlack).Add(color.BgHiMagenta),
+
+		color.New(color.FgBlack).Add(color.BgHiCyan),
+		color.New(color.FgBlack).Add(color.BgHiCyan),
+	}
+
+	dataColor := colorPalette[colorIndex%len(colorPalette)]
+	columnColor := columnPalette[colorIndex%len(columnPalette)]
 
 	sum := 0
 	for _, width := range columnWidths {

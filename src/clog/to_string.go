@@ -54,7 +54,7 @@ func fieldValueToString(f Field) string {
 		{
 			t := f.Other.(clogint.Table)
 
-			return tableToString(t)
+			return tableToString(t, f.ColorIndex)
 		}
 	case clogint.ErrorType:
 		return fmt.Sprintf("'%s'", f.Other.(error).Error())

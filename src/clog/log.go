@@ -80,7 +80,7 @@ func Uint32(key string, val uint32) Field {
 }
 
 func Uint64(key string, val uint64) Field {
-	return Field{Key: key, Type: clogint.UintType, UnsignedInteger: uint64(val)}
+	return Field{Key: key, Type: clogint.UintType, UnsignedInteger: val}
 }
 
 func Table(key string, columns []string, rows [][]string) Field {
