@@ -8,6 +8,7 @@ const (
 	IntType FieldType = iota
 	UintType
 	StringType
+	StringSliceType
 	StringerType
 	StringerSliceType
 	InterfaceType

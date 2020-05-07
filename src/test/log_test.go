@@ -39,3 +39,10 @@ func TestFile(t *testing.T) {
 	log.Err(fmt.Errorf("some generic error message"))
 	log.Error("stringer", clog.Stringer("error", TestStruct{}))
 }
+
+func TestStringSlice(t *testing.T) {
+	log := clog.DefaultLog()
+
+	log.Warn("I have to tell you something", clog.StringSlice("greeting", []string{"something",
+		"another", "and yet one more"}), clog.Int("code", -42))
+}
