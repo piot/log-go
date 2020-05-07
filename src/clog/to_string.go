@@ -30,6 +30,17 @@ func fieldValueToString(f Field) string {
 		return fmt.Sprintf("%v", f.UnsignedInteger)
 	case clogint.StringType:
 		return fmt.Sprintf("'%v'", f.String)
+	case clogint.StringSliceType:
+		s := ""
+
+		for index, stringValue := range f.Other.([]string) {
+			if index > 0 {
+				s += ", "
+			}
+			s += fmt.Sprintf("'%v'", stringValue)
+		}
+
+		return s
 	case clogint.StringerType:
 		return fmt.Sprintf("'%v'", f.Other)
 	case clogint.StringerSliceType:

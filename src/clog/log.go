@@ -44,11 +44,15 @@ func Int32(key string, val int32) Field {
 }
 
 func Int64(key string, val int64) Field {
-	return Field{Key: key, Type: clogint.IntType, Integer: int64(val)}
+	return Field{Key: key, Type: clogint.IntType, Integer: val}
 }
 
 func String(key string, val string) Field {
 	return Field{Key: key, Type: clogint.StringType, String: val}
+}
+
+func StringSlice(key string, val []string) Field {
+	return Field{Key: key, Type: clogint.StringSliceType, Other: val}
 }
 
 func Stringer(key string, val fmt.Stringer) Field {
